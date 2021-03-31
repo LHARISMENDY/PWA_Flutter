@@ -1,0 +1,6 @@
+{
+  "projects": {
+    "flutter-pwa-project": "flutter-pwa-project",
+    "default": "flutter-pwa-project"
+  }
+}

@@ -34,6 +34,7 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: Center(
         child: IconButton(
+          iconSize: 50,
           icon: Icon(
             Icons.camera_alt,
           ),
