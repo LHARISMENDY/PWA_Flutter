@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ai_barcode/ai_barcode.dart';
 
 void main() {
   runApp(MyApp());
@@ -26,6 +27,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  ScannerController _scannerController;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,12 +35,28 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
       ),
       body: Center(
-        child: IconButton(
-          iconSize: 50,
-          icon: Icon(
-            Icons.camera_alt,
-          ),
-          onPressed: () => null,
+        child: Column(
+          children: [
+            IconButton(
+              iconSize: 50,
+              icon: Icon(
+                Icons.camera_alt,
+                color: Colors.red,
+              ),
+              onPressed: () => _scannerController.startCamera(),
+            ),
+            Container(
+              color: Colors.black26,
+              width: 300,
+              height: 300,
+              child: PlatformAiBarcodeScannerWidget(
+                platformScannerController: _scannerController,
+              ),
+            ),
+            Text(
+              _scannerController.toString(),
+            ),
+          ],
         ),
       ),
     );
