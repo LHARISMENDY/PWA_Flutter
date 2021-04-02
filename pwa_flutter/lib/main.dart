@@ -1,5 +1,7 @@
+import 'package:barcode_scan/barcode_scan.dart';
 import 'package:flutter/material.dart';
-import 'package:ai_barcode/ai_barcode.dart';
+import 'package:flutter/services.dart';
+import 'package:pwa_flutter/web_screen.dart';
 
 void main() {
   runApp(MyApp());
@@ -9,11 +11,13 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'PWA Flutter',
+      title: 'Scanner QRCode & Barcode',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.red,
       ),
-      home: MyHomePage(title: 'Flutter PWA'),
+      home: MyHomePage(
+        title: 'Scanner QRCode & Barcode',
+      ),
     );
   }
 }
@@ -27,7 +31,8 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  ScannerController _scannerController;
+  String scanResult = '';
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,27 +43,58 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           children: [
             IconButton(
-              iconSize: 50,
+              iconSize: MediaQuery.of(context).size.width / 3,
               icon: Icon(
-                Icons.camera_alt,
+                Icons.qr_code_scanner_rounded,
                 color: Colors.red,
               ),
-              onPressed: () => _scannerController.startCamera(),
-            ),
-            Container(
-              color: Colors.black26,
-              width: 300,
-              height: 300,
-              child: PlatformAiBarcodeScannerWidget(
-                platformScannerController: _scannerController,
+              onPressed: () => setState(
+                () => _scanCode(),
               ),
             ),
-            Text(
-              _scannerController.toString(),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('Code : '),
+                OutlinedButton(
+                  child: Text(
+                    '$scanResult',
+                  ),
+                  onPressed:
+                      scanResult.isNotEmpty && scanResult.contains('https')
+                          ? () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => WebScreen(scanResult),
+                                ),
+                              )
+                          : () {},
+                ),
+              ],
             ),
           ],
         ),
       ),
     );
+  }
+
+  void _scanCode() async {
+    try {
+      String scanResult = await BarcodeScanner.scan();
+      setState(
+        () => this.scanResult = scanResult,
+      );
+    } on PlatformException catch (error) {
+      if (error.code == BarcodeScanner.CameraAccessDenied) {
+        setState(() {
+          this.scanResult =
+              'Votre appareil n\'a pas autorisé l\'accés à la caméra';
+        });
+      } else {
+        setState(
+          () => this.scanResult = 'Error: $error',
+        );
+      }
+    }
   }
 }
