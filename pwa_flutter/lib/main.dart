@@ -1,7 +1,5 @@
-import 'package:barcode_scan/barcode_scan.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:pwa_flutter/web_screen.dart';
+import 'package:camcode/cam_code_scanner.dart';
 
 void main() {
   runApp(MyApp());
@@ -49,28 +47,11 @@ class _MyHomePageState extends State<MyHomePage> {
                 color: Colors.red,
               ),
               onPressed: () => setState(
-                () => _scanCode(),
+                () => openScanner(context),
               ),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text('Code : '),
-                OutlinedButton(
-                  child: Text(
-                    '$scanResult',
-                  ),
-                  onPressed:
-                      scanResult.isNotEmpty && scanResult.contains('https')
-                          ? () => Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => WebScreen(scanResult),
-                                ),
-                              )
-                          : () {},
-                ),
-              ],
+            Text(
+              'Code : $scanResult',
             ),
           ],
         ),
@@ -78,23 +59,20 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  void _scanCode() async {
-    try {
-      String scanResult = await BarcodeScanner.scan();
-      setState(
-        () => this.scanResult = scanResult,
-      );
-    } on PlatformException catch (error) {
-      if (error.code == BarcodeScanner.CameraAccessDenied) {
-        setState(() {
-          this.scanResult =
-              'Votre appareil n\'a pas autorisé l\'accés à la caméra';
-        });
-      } else {
-        setState(
-          () => this.scanResult = 'Error: $error',
-        );
-      }
-    }
+  void openScanner(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => CamCodeScanner(
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height,
+        refreshDelayMillis: 800,
+        onBarcodeResult: (barcode) {
+          setState(() {
+            scanResult = barcode;
+            Navigator.pop(context);
+          });
+        },
+      ),
+    );
   }
 }
