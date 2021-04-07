@@ -9,12 +9,12 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Scanner QRCode & Barcode',
+      title: 'QRCode & Barcode Scanner',
       theme: ThemeData(
         primarySwatch: Colors.red,
       ),
       home: MyHomePage(
-        title: 'Scanner QRCode & Barcode',
+        title: 'QRCode & Barcode Scanner',
       ),
     );
   }
@@ -37,23 +37,27 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      body: Center(
-        child: Column(
-          children: [
-            IconButton(
-              iconSize: MediaQuery.of(context).size.width / 3,
-              icon: Icon(
-                Icons.qr_code_scanner_rounded,
-                color: Colors.red,
-              ),
-              onPressed: () => setState(
-                () => openScanner(context),
-              ),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Center(
+            child: Column(
+              children: [
+                IconButton(
+                  iconSize: MediaQuery.of(context).size.width / 3,
+                  icon: Icon(
+                    Icons.qr_code_scanner_rounded,
+                    color: Colors.red,
+                  ),
+                  onPressed: () => setState(
+                    () => openScanner(context),
+                  ),
+                ),
+                Text(
+                  'Code : $scanResult',
+                ),
+              ],
             ),
-            Text(
-              'Code : $scanResult',
-            ),
-          ],
+          ),
         ),
       ),
     );
@@ -62,16 +66,38 @@ class _MyHomePageState extends State<MyHomePage> {
   void openScanner(BuildContext context) {
     showDialog(
       context: context,
-      builder: (context) => CamCodeScanner(
-        width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height,
-        refreshDelayMillis: 800,
-        onBarcodeResult: (barcode) {
-          setState(() {
-            scanResult = barcode;
-            Navigator.pop(context);
-          });
-        },
+      builder: (context) => Dialog(
+        insetPadding: EdgeInsets.all(40),
+        child: Stack(
+          children: [
+            CamCodeScanner(
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height,
+              refreshDelayMillis: 800,
+              onBarcodeResult: (barcode) {
+                setState(
+                  () {
+                    scanResult = barcode;
+                    Navigator.pop(context);
+                  },
+                );
+              },
+            ),
+            Positioned(
+              right: 0.0,
+              child: Align(
+                alignment: Alignment.topRight,
+                child: IconButton(
+                  icon: Icon(
+                    Icons.close,
+                  ),
+                  color: Colors.red,
+                  onPressed: () => Navigator.pop(context),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
