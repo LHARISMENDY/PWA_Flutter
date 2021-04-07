@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:html';
+import 'dart:js';
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
@@ -23,6 +24,7 @@ class WebcamDialog extends StatefulWidget {
 class _WebcamDialogState extends State<WebcamDialog> {
   Widget _webcamWidget;
   VideoElement _webcamVideoElement;
+  ImageData image;
 
   Timer _timer;
 
@@ -64,13 +66,29 @@ class _WebcamDialogState extends State<WebcamDialog> {
           Duration(
             milliseconds: 400,
           ),
-          (timer) async => detectCode(
-            _webcamVideoElement.id,
-            widget.updateScanResult,
-          ),
+          (timer) async => _takePicture(),
         );
       },
     );
+  }
+
+  void _takePicture() async {
+    final _canvasElement = CanvasElement(
+        width: _webcamVideoElement.width, height: _webcamVideoElement.height);
+    final context = _canvasElement.context2D;
+    context.drawImageScaled(
+      _webcamVideoElement,
+      0,
+      0,
+      _webcamVideoElement.width,
+      _webcamVideoElement.height,
+    );
+    image = context.getImageData(
+        0, 0, _canvasElement.width ?? 0, _canvasElement.height ?? 0);
+    final dataUrl = _canvasElement.toDataUrl('image/png');
+    _webcamVideoElement.src = dataUrl;
+
+    detectCode(dataUrl, allowInterop(widget.updateScanResult));
   }
 
   @override

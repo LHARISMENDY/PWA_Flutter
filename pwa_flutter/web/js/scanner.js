@@ -1,7 +1,7 @@
-function detectCode(selectedDeviceId,callback){
+async function detectCode(dataUrl,callback){
     const codeReader = new ZXingBrowser.BrowserQRCodeReader();
 
-    const codeResult = codeReader.decodeFromVideoDevice(selectedDeviceId);
+    const codeResult = await codeReader.decodeFromImageUrl(dataUrl);
 
     console.log("Code result :",codeResult);
 

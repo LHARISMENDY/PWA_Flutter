@@ -5,7 +5,7 @@ import 'package:js/js.dart';
 
 @JS("detectCode")
 external void detectCode(
-  String selectedDeviceId,
+  String dataUrl,
   CodeResultCallback callback,
 );
 

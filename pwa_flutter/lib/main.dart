@@ -57,6 +57,11 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
                 Text(
                   'Code : $scanResult',
+                  style: TextStyle(
+                    color: Colors.red,
+                    fontSize: 40,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ],
             ),
