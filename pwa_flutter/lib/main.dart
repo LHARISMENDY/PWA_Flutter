@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:camcode/cam_code_scanner.dart';
+import 'package:pwa_flutter/webcam.dart';
 
 void main() {
   runApp(MyApp());
@@ -48,8 +48,11 @@ class _MyHomePageState extends State<MyHomePage> {
                     Icons.qr_code_scanner_rounded,
                     color: Colors.red,
                   ),
-                  onPressed: () => setState(
-                    () => openScanner(context),
+                  onPressed: () => showDialog(
+                    context: context,
+                    builder: (context) => WebcamDialog(
+                      updateScanResult: (result) => scanResult = result,
+                    ),
                   ),
                 ),
                 Text(
@@ -58,45 +61,6 @@ class _MyHomePageState extends State<MyHomePage> {
               ],
             ),
           ),
-        ),
-      ),
-    );
-  }
-
-  void openScanner(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => Dialog(
-        insetPadding: EdgeInsets.all(40),
-        child: Stack(
-          children: [
-            CamCodeScanner(
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height,
-              refreshDelayMillis: 800,
-              onBarcodeResult: (barcode) {
-                setState(
-                  () {
-                    scanResult = barcode;
-                    Navigator.pop(context);
-                  },
-                );
-              },
-            ),
-            Positioned(
-              right: 0.0,
-              child: Align(
-                alignment: Alignment.topRight,
-                child: IconButton(
-                  icon: Icon(
-                    Icons.close,
-                  ),
-                  color: Colors.red,
-                  onPressed: () => Navigator.pop(context),
-                ),
-              ),
-            ),
-          ],
         ),
       ),
     );
