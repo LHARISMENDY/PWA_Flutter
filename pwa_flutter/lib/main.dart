@@ -51,7 +51,9 @@ class _MyHomePageState extends State<MyHomePage> {
                   onPressed: () => showDialog(
                     context: context,
                     builder: (context) => WebcamDialog(
-                      updateScanResult: (result) => scanResult = result,
+                      setScanResult: (result) => setState(
+                        () => scanResult = result,
+                      ),
                     ),
                   ),
                 ),

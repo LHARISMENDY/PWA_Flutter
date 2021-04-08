@@ -1,11 +1,13 @@
 @JS()
 library zxing;
 
+import 'dart:html';
+
 import 'package:js/js.dart';
 
 @JS("detectCode")
 external void detectCode(
-  String dataUrl,
+  MediaStream stream,
   CodeResultCallback callback,
 );
 
