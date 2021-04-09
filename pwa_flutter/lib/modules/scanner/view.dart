@@ -50,6 +50,7 @@ class __ViewState extends State<_View> {
     _webcamVideoElement = VideoElement()..autoplay = true;
 
     //Find a webcam [platformViewRegistry does exist]
+    //// ignore: undefined_prefixed_name
     ui.platformViewRegistry.registerViewFactory(
       'webcamVideoElement',
       (int viewId) => _webcamVideoElement,
@@ -62,15 +63,29 @@ class __ViewState extends State<_View> {
     );
 
     //Access the webcam Stream
-    window.navigator
-        .getUserMedia(
-      video: true,
-    )
-        .then(
-      (MediaStream stream) {
-        _webcamVideoElement.srcObject = stream;
-      },
-    );
+    if (window.location.protocol.contains('https')) {
+      var options;
+      if (window.navigator.userAgent.contains('Mobi')) {
+        options = {
+          'video': {
+            'facingMode': {'exact': 'environment'}
+          }
+        };
+      } else {
+        options = {'video': true};
+      }
+      window.navigator.mediaDevices.getUserMedia(options).then(
+        (MediaStream stream) {
+          _webcamVideoElement.srcObject = stream;
+        },
+      );
+    } else {
+      window.navigator.getUserMedia(video: true).then(
+        (MediaStream stream) {
+          _webcamVideoElement.srcObject = stream;
+        },
+      );
+    }
 
     //Call the scanner
     _timer = Timer.periodic(
