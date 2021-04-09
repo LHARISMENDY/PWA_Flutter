@@ -22,7 +22,7 @@ async function detectCode(stream, callback) {
     const hints = new Map();
     hints.set(ZXing.DecodeHintType.POSSIBLE_FORMATS, formats);
     const codeReader = new ZXing.BrowserMultiFormatReader(hints);
-    await codeReader.decodeFromStream(stream, undefined, (response) => {
+    await codeReader.decodeOnceFromStream(stream).then((response) => {
         if (response != null) {
             console.log("Code result :", response.text);
             callback(response.text);
