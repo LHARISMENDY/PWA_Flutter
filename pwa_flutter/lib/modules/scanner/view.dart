@@ -57,7 +57,7 @@ class __ViewState extends State<_View> with SingleTickerProviderStateMixin {
     );
     _animation = CurvedAnimation(
       parent: _animationController,
-      curve: Curves.easeIn,
+      curve: Curves.fastOutSlowIn,
     )
       ..addListener(
         () => setState(() {}),
@@ -141,6 +141,7 @@ class __ViewState extends State<_View> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    double _scannerAnimationSize = 200;
     return Scaffold(
       appBar: AppBar(
         foregroundColor: Colors.transparent,
@@ -150,6 +151,18 @@ class __ViewState extends State<_View> with SingleTickerProviderStateMixin {
       body: Center(
         child: Column(
           children: [
+            Text(
+              "Scan your code",
+              style: AppTextStyle.title,
+            ),
+            Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Text(
+                'Place your code inside the frame to scan.\nPlease avoid shaking for best result',
+                textAlign: TextAlign.center,
+                style: AppTextStyle.body,
+              ),
+            ),
             Stack(
               alignment: Alignment.center,
               children: [
@@ -165,23 +178,24 @@ class __ViewState extends State<_View> with SingleTickerProviderStateMixin {
                   child: Stack(
                     children: [
                       Positioned(
-                        left: _animation.value * 190 + 3,
-                        top: 10,
+                        top: 5,
+                        left:
+                            _animation.value * (_scannerAnimationSize - 10) + 3,
                         child: Container(
-                          width: 3,
-                          height: 140,
+                          width: 4,
+                          height: _scannerAnimationSize - 10,
                           color: AppColors.titleColor,
                         ),
                       ),
                       Container(
-                        width: 200,
-                        height: 160,
+                        width: _scannerAnimationSize,
+                        height: _scannerAnimationSize,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.all(
                             Radius.circular(2),
                           ),
                           border: Border.all(
-                            width: 2,
+                            width: 5,
                             color: AppColors.primaryColor,
                           ),
                         ),
@@ -196,7 +210,7 @@ class __ViewState extends State<_View> with SingleTickerProviderStateMixin {
                 padding: const EdgeInsets.all(20.0),
                 child: RichText(
                   text: TextSpan(
-                    text: 'Code :',
+                    text: 'Code :  ',
                     style: AppTextStyle.title,
                     children: [
                       TextSpan(

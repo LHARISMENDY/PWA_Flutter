@@ -40,7 +40,7 @@ class _MyHomePageState extends State<MyHomePage> {
             child: Column(
               children: [
                 Padding(
-                  padding: const EdgeInsets.only(bottom: 8.0),
+                  padding: const EdgeInsets.only(bottom: 12.0),
                   child: Text(
                     "Let's get Started !",
                     style: AppTextStyle.title,
@@ -52,7 +52,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   style: AppTextStyle.body,
                 ),
                 Padding(
-                  padding: const EdgeInsets.all(40),
+                  padding: const EdgeInsets.all(20),
                   child: Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.all(
