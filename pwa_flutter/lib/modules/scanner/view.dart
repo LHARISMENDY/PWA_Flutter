@@ -5,8 +5,8 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:js/js.dart';
 import 'package:provider/provider.dart';
-import 'package:pwa_flutter/core/widget/scanner_widget.dart';
 import 'package:pwa_flutter/services/Zxing.dart';
+import 'package:pwa_flutter/theme/app_colors.dart';
 import 'package:pwa_flutter/theme/app_text_style.dart';
 
 import 'notifier.dart';
@@ -39,28 +39,42 @@ class _View extends StatefulWidget {
   __ViewState createState() => __ViewState();
 }
 
-class __ViewState extends State<_View> with TickerProviderStateMixin {
+class __ViewState extends State<_View> with SingleTickerProviderStateMixin {
   Widget _webcamWidget;
   VideoElement _webcamVideoElement;
   ImageData image;
   Timer _timer;
   AnimationController _animationController;
+  Animation<double> _animation;
+  Animation<int> alpha;
 
   @override
   void initState() {
     super.initState();
-
-    _webcamVideoElement = VideoElement()..autoplay = true;
     _animationController = AnimationController(
       vsync: this,
       duration: Duration(seconds: 1),
-    )..addStatusListener((status) {
-        if (status == AnimationStatus.completed) {
-          animateScanAnimation(true);
-        } else if (status == AnimationStatus.dismissed) {
-          animateScanAnimation(false);
-        }
-      });
+    );
+    _animation = CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.easeIn,
+    )
+      ..addListener(
+        () => setState(() {}),
+      )
+      ..addStatusListener(
+        (status) {
+          if (status == AnimationStatus.completed) {
+            _animationController.reverse();
+          } else if (status == AnimationStatus.dismissed) {
+            _animationController.forward();
+          }
+        },
+      );
+
+    _animationController.forward();
+
+    _webcamVideoElement = VideoElement()..autoplay = true;
 
     //Find a webcam [platformViewRegistry does exist]
     //// ignore: undefined_prefixed_name
@@ -110,8 +124,6 @@ class __ViewState extends State<_View> with TickerProviderStateMixin {
         ),
       ),
     );
-
-    animateScanAnimation(true);
   }
 
   @override
@@ -123,27 +135,23 @@ class __ViewState extends State<_View> with TickerProviderStateMixin {
       track.enabled = false;
     });
     _webcamVideoElement.srcObject = null;
-
     _animationController.dispose();
     super.dispose();
-  }
-
-  void animateScanAnimation(bool reverse) {
-    if (reverse) {
-      _animationController.reverse(from: 1.0);
-    } else {
-      _animationController.forward(from: 0.0);
-    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        foregroundColor: Colors.transparent,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+      ),
       body: Center(
         child: Column(
           children: [
             Stack(
+              alignment: Alignment.center,
               children: [
                 Container(
                   constraints: BoxConstraints(
@@ -152,16 +160,40 @@ class __ViewState extends State<_View> with TickerProviderStateMixin {
                   ),
                   child: _webcamWidget,
                 ),
-                ImageScannerAnimation(
-                  false,
-                  MediaQuery.of(context).size.height / 1.5,
-                  animation: _animationController,
+                Align(
+                  alignment: Alignment.center,
+                  child: Stack(
+                    children: [
+                      Positioned(
+                        left: _animation.value * 190 + 3,
+                        top: 10,
+                        child: Container(
+                          width: 3,
+                          height: 140,
+                          color: AppColors.titleColor,
+                        ),
+                      ),
+                      Container(
+                        width: 200,
+                        height: 160,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(2),
+                          ),
+                          border: Border.all(
+                            width: 2,
+                            color: AppColors.primaryColor,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
             Consumer<ScannerNotifier>(
               builder: (_, notifier, __) => Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.all(20.0),
                 child: RichText(
                   text: TextSpan(
                     text: 'Code :',
