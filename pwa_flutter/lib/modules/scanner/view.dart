@@ -5,7 +5,9 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:js/js.dart';
 import 'package:provider/provider.dart';
+import 'package:pwa_flutter/core/widget/scanner_widget.dart';
 import 'package:pwa_flutter/services/Zxing.dart';
+import 'package:pwa_flutter/theme/app_text_style.dart';
 
 import 'notifier.dart';
 
@@ -37,17 +39,28 @@ class _View extends StatefulWidget {
   __ViewState createState() => __ViewState();
 }
 
-class __ViewState extends State<_View> {
+class __ViewState extends State<_View> with TickerProviderStateMixin {
   Widget _webcamWidget;
   VideoElement _webcamVideoElement;
   ImageData image;
   Timer _timer;
+  AnimationController _animationController;
 
   @override
   void initState() {
     super.initState();
 
     _webcamVideoElement = VideoElement()..autoplay = true;
+    _animationController = AnimationController(
+      vsync: this,
+      duration: Duration(seconds: 1),
+    )..addStatusListener((status) {
+        if (status == AnimationStatus.completed) {
+          animateScanAnimation(true);
+        } else if (status == AnimationStatus.dismissed) {
+          animateScanAnimation(false);
+        }
+      });
 
     //Find a webcam [platformViewRegistry does exist]
     //// ignore: undefined_prefixed_name
@@ -97,6 +110,8 @@ class __ViewState extends State<_View> {
         ),
       ),
     );
+
+    animateScanAnimation(true);
   }
 
   @override
@@ -108,38 +123,61 @@ class __ViewState extends State<_View> {
       track.enabled = false;
     });
     _webcamVideoElement.srcObject = null;
+
+    _animationController.dispose();
     super.dispose();
+  }
+
+  void animateScanAnimation(bool reverse) {
+    if (reverse) {
+      _animationController.reverse(from: 1.0);
+    } else {
+      _animationController.forward(from: 0.0);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(),
-      body: Column(
-        children: [
-          Center(
-            child: Container(
-              constraints: BoxConstraints(
-                maxWidth: MediaQuery.of(context).size.width / 1.5,
-                maxHeight: MediaQuery.of(context).size.height / 1.5,
-              ),
-              child: _webcamWidget,
+      body: Center(
+        child: Column(
+          children: [
+            Stack(
+              children: [
+                Container(
+                  constraints: BoxConstraints(
+                    maxWidth: MediaQuery.of(context).size.width / 1.5,
+                    maxHeight: MediaQuery.of(context).size.height / 1.5,
+                  ),
+                  child: _webcamWidget,
+                ),
+                ImageScannerAnimation(
+                  false,
+                  MediaQuery.of(context).size.height / 1.5,
+                  animation: _animationController,
+                ),
+              ],
             ),
-          ),
-          Consumer<ScannerNotifier>(
-            builder: (_, notifier, __) => Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                'Code : ${notifier.scanResult}',
-                style: TextStyle(
-                  color: Colors.red,
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
+            Consumer<ScannerNotifier>(
+              builder: (_, notifier, __) => Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: RichText(
+                  text: TextSpan(
+                    text: 'Code :',
+                    style: AppTextStyle.title,
+                    children: [
+                      TextSpan(
+                        text: '${notifier.scanResult}',
+                        style: AppTextStyle.body,
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
