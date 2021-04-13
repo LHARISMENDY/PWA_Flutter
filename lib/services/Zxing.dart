@@ -6,8 +6,8 @@ import 'dart:html';
 import 'package:js/js.dart';
 
 @JS("detectCode")
-external void detectCode(
-  MediaStream stream,
+external Future<void> detectCode(
+  String deviceId,
   CodeResultCallback callback,
 );
 
