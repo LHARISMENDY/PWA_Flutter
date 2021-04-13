@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:html';
 import 'dart:ui' as ui;
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:js/js.dart';
 import 'package:provider/provider.dart';
@@ -79,7 +80,6 @@ class __ViewState extends State<_View> with SingleTickerProviderStateMixin {
       ..setAttribute('playsinline', 'true');
 
     //Find a webcam [platformViewRegistry does exist]
-    //// ignore: undefined_prefixed_name
     ui.platformViewRegistry.registerViewFactory(
       'webcamVideoElement',
       (int viewId) => _webcamVideoElement,
@@ -118,13 +118,11 @@ class __ViewState extends State<_View> with SingleTickerProviderStateMixin {
     }
 
     //Call the scanner
-    _timer = Timer.periodic(
-      Duration(milliseconds: 400),
-      (timer) async => detectCode(
-        _webcamVideoElement.srcObject,
-        allowInterop(
-          (result) => context.read<ScannerNotifier>().scanResult = result,
-        ),
+    detectCode(
+      _webcamVideoElement.id,
+      _webcamVideoElement,
+      allowInterop(
+        (result) => context.read<ScannerNotifier>().scanResult = result,
       ),
     );
   }
