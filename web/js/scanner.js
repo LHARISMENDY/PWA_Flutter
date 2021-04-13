@@ -1,4 +1,4 @@
-async function detectCode(deviceId, callback) {
+async function detectCode(deviceId, videoElement, callback) {
     const formats = [
         ZXing.BarcodeFormat.AZTEC,
         //ZXing.BarcodeFormat.CODABAR,
@@ -22,12 +22,12 @@ async function detectCode(deviceId, callback) {
     const hints = new Map();
     hints.set(ZXing.DecodeHintType.POSSIBLE_FORMATS, formats);
     const codeReader = new ZXing.BrowserMultiFormatReader(hints);
-    await codeReader.decodeFromVideoDevice(deviceId,undefined,(response) => {
+    await codeReader.decodeFromVideoDevice(deviceId,videoElement,(response) => {
         if (response != null) {
             console.log("Code result :", response.text);
             callback(response.text);
         } else {
             console.log("No code detected");
         }
-    }).then().catch((err) => console.error(err));
+    }).catch((err) => console.error(err));
 }

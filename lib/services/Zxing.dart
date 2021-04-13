@@ -8,6 +8,7 @@ import 'package:js/js.dart';
 @JS("detectCode")
 external Future<void> detectCode(
   String deviceId,
+  VideoElement videoElement,
   CodeResultCallback callback,
 );
 

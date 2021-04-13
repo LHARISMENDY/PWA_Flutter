@@ -118,13 +118,11 @@ class __ViewState extends State<_View> with SingleTickerProviderStateMixin {
     }
 
     //Call the scanner
-    Future.delayed(
-      Duration(seconds: 1),
-      () async => await detectCode(
-        _webcamVideoElement.id,
-        allowInterop(
-          (result) => context.read<ScannerNotifier>().scanResult = result,
-        ),
+    detectCode(
+      _webcamVideoElement.id,
+      _webcamVideoElement,
+      allowInterop(
+        (result) => context.read<ScannerNotifier>().scanResult = result,
       ),
     );
   }
