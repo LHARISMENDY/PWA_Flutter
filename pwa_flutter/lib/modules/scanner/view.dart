@@ -71,10 +71,12 @@ class __ViewState extends State<_View> with SingleTickerProviderStateMixin {
           }
         },
       );
-
     _animationController.forward();
 
-    _webcamVideoElement = VideoElement()..autoplay = true;
+    _webcamVideoElement = VideoElement()
+      ..autoplay = true
+      ..muted = true
+      ..setAttribute('playsinline', 'true');
 
     //Find a webcam [platformViewRegistry does exist]
     //// ignore: undefined_prefixed_name
@@ -94,12 +96,13 @@ class __ViewState extends State<_View> with SingleTickerProviderStateMixin {
       var options;
       if (window.navigator.userAgent.contains('Mobi')) {
         options = {
+          'audio': false,
           'video': {
             'facingMode': {'exact': 'environment'}
           }
         };
       } else {
-        options = {'video': true};
+        options = {'audio': false, 'video': true};
       }
       window.navigator.mediaDevices.getUserMedia(options).then(
         (MediaStream stream) {
@@ -130,10 +133,12 @@ class __ViewState extends State<_View> with SingleTickerProviderStateMixin {
   void dispose() {
     _webcamVideoElement.pause();
     _timer.cancel();
-    _webcamVideoElement.srcObject.getTracks().forEach((track) {
-      track.stop();
-      track.enabled = false;
-    });
+    _webcamVideoElement.srcObject.getTracks().forEach(
+      (track) {
+        track.stop();
+        track.enabled = false;
+      },
+    );
     _webcamVideoElement.srcObject = null;
     _animationController.dispose();
     super.dispose();
@@ -143,13 +148,9 @@ class __ViewState extends State<_View> with SingleTickerProviderStateMixin {
   Widget build(BuildContext context) {
     double _scannerAnimationSize = 200;
     return Scaffold(
-      appBar: AppBar(
-        foregroundColor: Colors.transparent,
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-      ),
       body: Center(
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
               "Scan your code",
@@ -173,52 +174,45 @@ class __ViewState extends State<_View> with SingleTickerProviderStateMixin {
                   ),
                   child: _webcamWidget,
                 ),
-                Align(
-                  alignment: Alignment.center,
-                  child: Stack(
-                    children: [
-                      Positioned(
-                        top: 5,
-                        left:
-                            _animation.value * (_scannerAnimationSize - 10) + 3,
-                        child: Container(
-                          width: 4,
-                          height: _scannerAnimationSize - 10,
-                          color: AppColors.titleColor,
+                Stack(
+                  children: [
+                    Positioned(
+                      top: 5,
+                      left: _animation.value * (_scannerAnimationSize - 10) + 3,
+                      child: Container(
+                        width: 4,
+                        height: _scannerAnimationSize - 10,
+                        color: AppColors.titleColor,
+                      ),
+                    ),
+                    Container(
+                      width: _scannerAnimationSize,
+                      height: _scannerAnimationSize,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(2),
+                        ),
+                        border: Border.all(
+                          width: 5,
+                          color: AppColors.primaryColor,
                         ),
                       ),
-                      Container(
-                        width: _scannerAnimationSize,
-                        height: _scannerAnimationSize,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(2),
-                          ),
-                          border: Border.all(
-                            width: 5,
-                            color: AppColors.primaryColor,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ],
             ),
             Consumer<ScannerNotifier>(
-              builder: (_, notifier, __) => Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: RichText(
-                  text: TextSpan(
-                    text: 'Code :  ',
-                    style: AppTextStyle.title,
-                    children: [
-                      TextSpan(
-                        text: '${notifier.scanResult}',
-                        style: AppTextStyle.body,
-                      ),
-                    ],
-                  ),
+              builder: (_, notifier, __) => RichText(
+                text: TextSpan(
+                  text: 'Code :  ',
+                  style: AppTextStyle.title,
+                  children: [
+                    TextSpan(
+                      text: '${notifier.scanResult}',
+                      style: AppTextStyle.body,
+                    ),
+                  ],
                 ),
               ),
             ),

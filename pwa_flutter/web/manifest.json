@@ -1,11 +1,11 @@
 {
-    "name": "pwa_flutter",
-    "short_name": "pwa_flutter",
+    "name": "QrCode & Barcode PWA Scanner",
+    "short_name": "Scanner",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#E52A2A",
     "theme_color": "#E52A2A",
-    "description": "Un projet pour tester les PWA",
+    "description": "A QrCode & Barcode Scanner in a PWA",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

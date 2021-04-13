@@ -43,7 +43,7 @@
 	<false/>
 	<key>NSCameraUsageDescription</key>
     <string>Can we access your camera in order to scan barcodes?</string>
-	<key>io.flutter.embedded_views_preview</key>
-    <true/>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Can we access your mic in order to scan barcodes?</string>
 </dict>
 </plist>

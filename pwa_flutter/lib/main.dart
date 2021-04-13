@@ -33,54 +33,47 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Center(
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 12.0),
-                  child: Text(
-                    "Let's get Started !",
-                    style: AppTextStyle.title,
-                  ),
-                ),
-                Text(
-                  'Tap the icon to start scanning\nPlease give access your Camera',
-                  textAlign: TextAlign.center,
-                  style: AppTextStyle.body,
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(30.0),
-                      ),
-                      border: Border.all(
-                        width: 8,
-                        color: AppColors.primaryColor,
-                      ),
-                    ),
-                    child: IconButton(
-                      iconSize: 300,
-                      icon: Icon(
-                        Icons.flip,
-                        color: AppColors.titleColor,
-                      ),
-                      onPressed: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (BuildContext context) => ScannerView(),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              "Let's get Started !",
+              style: AppTextStyle.title,
             ),
-          ),
+            Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Text(
+                'Tap the icon to start scanning\nPlease give access your Camera',
+                textAlign: TextAlign.center,
+                style: AppTextStyle.body,
+              ),
+            ),
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(
+                  Radius.circular(30.0),
+                ),
+                border: Border.all(
+                  width: 8,
+                  color: AppColors.primaryColor,
+                ),
+              ),
+              child: IconButton(
+                iconSize: 300,
+                icon: Icon(
+                  Icons.flip,
+                  color: AppColors.titleColor,
+                ),
+                onPressed: () => Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (BuildContext context) => ScannerView(),
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
